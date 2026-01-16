@@ -1,11 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Logo, Button } from '../components/ui';
 import { ScanLine, Utensils, History, ArrowRight } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -31,9 +29,11 @@ export const HomePage: React.FC = () => {
             Experience the future of dining. Skip the wait and order directly from your table with Gobite.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-10 py-4" onClick={() => navigate('/auth')}>
-              Get Started <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link to="/auth">
+              <Button size="lg" className="w-full sm:w-auto">
+                Get Started <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

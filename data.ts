@@ -1,6 +1,16 @@
 import { MenuItem } from './types';
 
+export const HOTEL_NAME = "Gobite Premium Dining";
+
 export const CATEGORIES = ['All', 'Appetizers', 'Main Course', 'Desserts', 'Beverages'];
+
+export const COMMON_ALLERGIES = [
+  'Peanuts', 'Dairy', 'Gluten', 'Shellfish', 'Soy', 'Eggs', 'Tree Nuts', 'Fish'
+];
+
+export const AVAILABLE_TABLES = [
+  'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-10'
+];
 
 export const MENU_ITEMS: MenuItem[] = [
   {

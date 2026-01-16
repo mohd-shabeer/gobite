@@ -1,14 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CartItem, MenuItem, Order, User } from './types';
+import { CartItem, MenuItem, Order, User, OrderType } from './types';
+
+interface AddToCartParams {
+  item: MenuItem;
+  quantity: number;
+  orderType: OrderType;
+  instructions?: string;
+  allergies?: string[];
+  customAllergy?: string;
+}
 
 interface StoreContextType {
   user: User | null;
   login: (user: User) => void;
   logout: () => void;
   cart: CartItem[];
-  addToCart: (item: MenuItem, quantity: number) => void;
-  removeFromCart: (itemId: string) => void;
-  updateQuantity: (itemId: string, quantity: number) => void;
+  addToCart: (params: AddToCartParams) => void;
+  removeFromCart: (cartId: string) => void;
+  updateQuantity: (cartId: string, quantity: number) => void;
   clearCart: () => void;
   orders: Order[];
   addOrder: (order: Order) => void;
@@ -36,7 +45,9 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
   });
 
   const [restaurantId, setRestaurantId] = useState('default');
-  const [tableNumber, setTableNumber] = useState('1');
+  const [tableNumber, setTableNumber] = useState(() => {
+    return localStorage.getItem('gobite_table') || '';
+  });
 
   useEffect(() => {
     localStorage.setItem('gobite_user', JSON.stringify(user));
@@ -58,28 +69,31 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
     localStorage.removeItem('gobite_user');
     localStorage.removeItem('gobite_cart');
     localStorage.removeItem('gobite_orders');
+    localStorage.removeItem('gobite_table');
   };
 
-  const addToCart = (item: MenuItem, quantity: number) => {
+  const addToCart = ({ item, quantity, orderType, instructions, allergies, customAllergy }: AddToCartParams) => {
+    const cartId = `${item.id}-${orderType}-${instructions}-${(allergies || []).join(',')}-${customAllergy}`;
+    
     setCart(prev => {
-      const existing = prev.find(i => i.id === item.id);
+      const existing = prev.find(i => i.cartId === cartId);
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i);
+        return prev.map(i => i.cartId === cartId ? { ...i, quantity: i.quantity + quantity } : i);
       }
-      return [...prev, { ...item, quantity }];
+      return [...prev, { ...item, cartId, quantity, orderType, instructions, allergies, customAllergy }];
     });
   };
 
-  const removeFromCart = (itemId: string) => {
-    setCart(prev => prev.filter(i => i.id !== itemId));
+  const removeFromCart = (cartId: string) => {
+    setCart(prev => prev.filter(i => i.cartId !== cartId));
   };
 
-  const updateQuantity = (itemId: string, quantity: number) => {
+  const updateQuantity = (cartId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(itemId);
+      removeFromCart(cartId);
       return;
     }
-    setCart(prev => prev.map(i => i.id === itemId ? { ...i, quantity } : i));
+    setCart(prev => prev.map(i => i.cartId === cartId ? { ...i, quantity } : i));
   };
 
   const clearCart = () => setCart([]);
@@ -91,6 +105,7 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
   const setSessionInfo = (restId: string, table: string) => {
     setRestaurantId(restId);
     setTableNumber(table);
+    localStorage.setItem('gobite_table', table);
   };
 
   return (

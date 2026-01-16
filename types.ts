@@ -8,8 +8,15 @@ export interface MenuItem {
   popular?: boolean;
 }
 
+export type OrderType = 'Dining' | 'Takeaway';
+
 export interface CartItem extends MenuItem {
   quantity: number;
+  orderType: OrderType;
+  instructions?: string;
+  allergies?: string[];
+  customAllergy?: string;
+  cartId: string; // Unique ID for same item with different options
 }
 
 export interface User {

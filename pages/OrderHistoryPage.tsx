@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header, StatusBadge } from '../components/ui';
 import { useStore } from '../context';
-import { Clock } from 'lucide-react';
+import { Clock, ShoppingBag, Utensils } from 'lucide-react';
 
 export const OrderHistoryPage: React.FC = () => {
   const { orders } = useStore();
@@ -20,29 +20,50 @@ export const OrderHistoryPage: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {orders.map(order => (
-              <div key={order.id} className="bg-surface border border-border rounded-xl p-6 hover:border-primary/30 transition-colors">
-                <div className="flex justify-between items-start mb-4">
+              <div key={order.id} className="bg-surface border border-border rounded-xl p-6 hover:border-primary/30 transition-colors shadow-lg">
+                <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-4">
                   <div>
-                    <h3 className="font-bold text-white">Order #{order.id}</h3>
-                    <p className="text-sm text-textSecondary">{new Date(order.date).toLocaleString()}</p>
+                    <h3 className="font-bold text-white text-lg">Order #{order.id}</h3>
+                    <p className="text-xs text-textSecondary mt-1">{new Date(order.date).toLocaleString()}</p>
+                    <p className="text-xs text-textSecondary mt-0.5">Table: <span className="text-white">{order.tableNumber}</span></p>
                   </div>
                   <StatusBadge status={order.status} />
                 </div>
                 
-                <div className="space-y-2 mb-4">
-                  {order.items.map(item => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-textSecondary">
-                        <span className="text-white font-medium">{item.quantity}x</span> {item.name}
-                      </span>
-                      <span className="text-textSecondary">${(item.price * item.quantity).toFixed(2)}</span>
+                <div className="space-y-4 mb-4">
+                  {order.items.map((item, idx) => (
+                    <div key={item.cartId || idx} className="flex justify-between items-start text-sm">
+                      <div className="flex gap-3">
+                         <div className="w-6 h-6 rounded bg-surfaceLight flex items-center justify-center text-xs font-bold text-white shrink-0">
+                           {item.quantity}x
+                         </div>
+                         <div className="flex flex-col gap-1.5">
+                           <span className="text-textSecondary font-medium leading-tight">{item.name}</span>
+                           <div className="flex flex-wrap gap-2">
+                             <span className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded border uppercase font-bold tracking-wider ${
+                               item.orderType === 'Takeaway' 
+                               ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' 
+                               : 'bg-primary/10 border-primary/20 text-primary'
+                             }`}>
+                               {item.orderType === 'Takeaway' ? <ShoppingBag size={10} /> : <Utensils size={10} />}
+                               {item.orderType}
+                             </span>
+                             {item.instructions && (
+                               <span className="text-[10px] text-textSecondary italic max-w-[200px] truncate">
+                                 Note: {item.instructions}
+                               </span>
+                             )}
+                           </div>
+                         </div>
+                      </div>
+                      <span className="text-white font-bold">${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 
-                <div className="flex justify-between items-center pt-4 border-t border-border">
+                <div className="flex justify-between items-center pt-4 border-t border-border mt-4">
                   <span className="text-textSecondary">Total Amount</span>
-                  <span className="text-primary font-bold text-lg">${order.total.toFixed(2)}</span>
+                  <span className="text-primary font-bold text-xl">${order.total.toFixed(2)}</span>
                 </div>
               </div>
             ))}
