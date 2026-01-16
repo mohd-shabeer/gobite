@@ -73,14 +73,27 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
   };
 
   const addToCart = ({ item, quantity, orderType, instructions, allergies, customAllergy }: AddToCartParams) => {
-    const cartId = `${item.id}-${orderType}-${instructions}-${(allergies || []).join(',')}-${customAllergy}`;
+    // Generate robust ID
+    const cleanInstructions = (instructions || '').trim();
+    const cleanCustomAllergy = (customAllergy || '').trim();
+    const sortedAllergies = [...(allergies || [])].sort().join(',');
+    
+    const cartId = `${item.id}-${orderType}-${cleanInstructions}-${sortedAllergies}-${cleanCustomAllergy}`;
     
     setCart(prev => {
       const existing = prev.find(i => i.cartId === cartId);
       if (existing) {
         return prev.map(i => i.cartId === cartId ? { ...i, quantity: i.quantity + quantity } : i);
       }
-      return [...prev, { ...item, cartId, quantity, orderType, instructions, allergies, customAllergy }];
+      return [...prev, { 
+        ...item, 
+        cartId, 
+        quantity, 
+        orderType, 
+        instructions: cleanInstructions, 
+        allergies: allergies?.sort(), 
+        customAllergy: cleanCustomAllergy 
+      }];
     });
   };
 

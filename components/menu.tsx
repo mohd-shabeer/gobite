@@ -83,30 +83,64 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, isOpen, 
   const [instructions, setInstructions] = React.useState('');
   const [selectedAllergies, setSelectedAllergies] = React.useState<string[]>([]);
   const [customAllergy, setCustomAllergy] = React.useState('');
+  const [existingCartId, setExistingCartId] = React.useState<string | null>(null);
   
-  const { addToCart } = useStore();
+  const { cart, addToCart, updateQuantity } = useStore();
 
+  // Reset or Sync when item changes or modal opens
   React.useEffect(() => {
-    if (isOpen) {
-      setQuantity(1);
+    if (isOpen && item) {
+      // Default state reset
       setOrderType('Dining');
       setInstructions('');
       setSelectedAllergies([]);
       setCustomAllergy('');
+      // We start with 1, but the effect below will check for existing
+      setQuantity(1);
     }
-  }, [isOpen]);
+  }, [isOpen, item]);
+
+  // Check for existing item in cart whenever dependencies change
+  React.useEffect(() => {
+    if (!item || !isOpen) return;
+
+    const cleanInstructions = instructions.trim();
+    const cleanCustomAllergy = customAllergy.trim();
+    const sortedAllergies = [...selectedAllergies].sort().join(',');
+    
+    // Generate the ID exactly how context does
+    const targetId = `${item.id}-${orderType}-${cleanInstructions}-${sortedAllergies}-${cleanCustomAllergy}`;
+    
+    const found = cart.find(i => i.cartId === targetId);
+    
+    if (found) {
+      setExistingCartId(found.cartId);
+      setQuantity(found.quantity);
+    } else {
+      setExistingCartId(null);
+      // Only reset to 1 if we switched from an existing item to a non-existing configuration
+      // We don't want to reset to 1 if the user is just typing instructions (though typing instructions changes ID, so new config, so 1 is correct)
+      if (quantity === 0) setQuantity(1); 
+    }
+  }, [item, isOpen, orderType, instructions, selectedAllergies, customAllergy, cart]);
 
   if (!isOpen || !item) return null;
 
-  const handleAddToCart = () => {
-    addToCart({ 
-      item, 
-      quantity, 
-      orderType, 
-      instructions, 
-      allergies: selectedAllergies,
-      customAllergy 
-    });
+  const handleAction = () => {
+    if (existingCartId) {
+      // Update existing item
+      updateQuantity(existingCartId, quantity);
+    } else {
+      // Add new item
+      addToCart({ 
+        item, 
+        quantity, 
+        orderType, 
+        instructions, 
+        allergies: selectedAllergies,
+        customAllergy 
+      });
+    }
     onClose();
   };
 
@@ -216,8 +250,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, isOpen, 
               </button>
             </div>
             
-            <Button className="flex-1 py-4 text-lg" onClick={handleAddToCart}>
-              Add to Order
+            <Button className="flex-1 py-4 text-lg" onClick={handleAction}>
+              {existingCartId ? 'Update Order' : 'Add to Order'}
             </Button>
           </div>
         </div>
