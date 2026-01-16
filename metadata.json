@@ -1,0 +1,5 @@
+{
+  "name": "Gobite",
+  "description": "A futuristic, dark-themed restaurant ordering application with QR scanning, real-time menu browsing, and seamless checkout.",
+  "requestFramePermissions": []
+}
