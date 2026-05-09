@@ -8,10 +8,10 @@ const AUTH_PASS = 'secret123';
 export const apiClient = {
   async request(endpoint: string, options: RequestInit = {}) {
     const url = `${API_URL}/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`;
-    
+
     // Setup Basic Auth header
     const auth = btoa(`${AUTH_USER}:${AUTH_PASS}`);
-    
+
     const headers = {
       'Authorization': `Basic ${auth}`,
       'Content-Type': 'application/json',
@@ -25,14 +25,9 @@ export const apiClient = {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
-      }
-
       return data;
     } catch (error) {
-      console.error(`API Request Error [${endpoint}]:`, error);
+      console.warn(`API Request Warning [${endpoint}]:`, error);
       throw error;
     }
   },

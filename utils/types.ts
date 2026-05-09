@@ -48,6 +48,7 @@ export interface User {
   restaurant_id?: number | string;
   restaurant_name?: string;
   qr_code_token?: string;
+  is_guest?: boolean;
 }
 
 export type OrderStatus =

@@ -78,14 +78,19 @@ export function Header({
 
         <div className="flex items-center gap-2">
           {user && (
-            <div className="flex items-center gap-1.5 bg-accentLight px-2.5 py-1.5 rounded-full mr-1">
+            <button
+              onClick={() => {
+                if (!user.is_guest) router.push("/settings");
+              }}
+              className={`flex items-center gap-1.5 bg-accentLight px-2.5 py-1.5 rounded-full mr-1 ${!user.is_guest ? 'hover:bg-[#FFDAC8] transition-colors cursor-pointer' : ''}`}
+            >
               <div className="w-5 h-5 rounded-full bg-[#FFD9C8] flex items-center justify-center text-primary">
                 <User size={12} />
               </div>
               <span className="text-xs font-semibold text-primary max-w-[72px] truncate">
                 {user.name.split(" ")[0]}
               </span>
-            </div>
+            </button>
           )}
 
           {rightAction}
@@ -165,6 +170,12 @@ export function Header({
                   <LifeBuoy size={22} className="text-inkMid" />
                   <span className="text-base font-semibold text-ink">Support</span>
                 </button>
+                {user && !user.is_guest && (
+                  <button onClick={() => { closeDrawer(); router.push("/settings"); }} className="w-full flex items-center gap-4 px-6 py-4 hover:bg-bgBase transition-colors text-left">
+                    <User size={22} className="text-inkMid" />
+                    <span className="text-base font-semibold text-ink">Account Settings</span>
+                  </button>
+                )}
                 
                 {user && (
                   <div className="mt-auto border-t border-borderLite p-4">

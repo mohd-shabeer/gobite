@@ -12,7 +12,7 @@ import { useStore } from "../../context/StoreContext";
 import { MenuItem } from "../../utils/types";
 
 export default function MenuPage() {
-  const { tableNumber, setSessionInfo, menuItems, restaurantInfo } = useStore();
+  const { tableNumber, setSessionInfo, menuItems, restaurantInfo, restaurantId, user, availableTables } = useStore();
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [showTablePicker, setShowTablePicker] = useState(false);
@@ -25,12 +25,20 @@ export default function MenuPage() {
 
   const hotelName = restaurantInfo?.name || "GoBite";
 
-  // Set default if empty initially
   useEffect(() => {
-    if (!tableNumber) {
-      setSessionInfo("default", "Takeaway");
+    if (restaurantId && restaurantId !== "default" && !tableNumber && (!user || user.role === "customer")) {
+      const myEngagedTable = availableTables.find((t: any) => t.engaged_by_user_id?.toString() === user?.id?.toString());
+      if (myEngagedTable) {
+        setSessionInfo(restaurantId, myEngagedTable.table_number, myEngagedTable.id);
+        setShowTablePicker(false);
+      } else {
+        setShowTablePicker(true);
+      }
+    } else if (!tableNumber) {
+      // Fallback if no restaurantId yet
+      setShowTablePicker(true);
     }
-  }, [tableNumber, setSessionInfo]);
+  }, [tableNumber, restaurantId, user, availableTables, setSessionInfo]);
 
   const filteredItems =
     activeCategory === "All"

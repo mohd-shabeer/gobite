@@ -61,7 +61,7 @@ interface StoreContextType {
   tableId: string;
   tableNumber: string;
   setSessionInfo: (restId: string, table: string, tableId?: string) => void;
-  availableTables: { id: string; table_number: string }[];
+  availableTables: { id: string; table_number: string; status?: string; engaged_by_user_id?: string }[];
   isLoading: boolean;
   restaurantInfo: any;
   fetchOrders: () => Promise<void>;
@@ -90,7 +90,7 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
   const [restaurantInfo, setRestaurantInfo] = useState<any>(null);
   const [tableNumber, setTableNumber] = useState("");
   const [tableId, setTableId] = useState("0");
-  const [availableTables, setAvailableTables] = useState<{ id: string; table_number: string }[]>([]);
+  const [availableTables, setAvailableTables] = useState<{ id: string; table_number: string; status?: string; engaged_by_user_id?: string }[]>([]);
   const [activeOrderId, setActiveOrder] = useState<string | null>(null);
 
   const fetchOrders = async () => {
@@ -146,6 +146,8 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
           setAvailableTables(tablesRes.data.map((t: any) => ({
             id: t.id.toString(),
             table_number: t.table_number.toString(),
+            status: t.status,
+            engaged_by_user_id: t.engaged_by_user_id?.toString()
           })));
         }
       }

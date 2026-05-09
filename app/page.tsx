@@ -23,7 +23,7 @@ function GetStartedContent() {
 
   const router = useRouter();
   const { login, setSessionInfo, user, refreshData } = useStore();
-  const [view, setView] = useState<AuthView>("welcome");
+  const [view, setView] = useState<AuthView>(token ? "welcome" : "login");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -82,8 +82,29 @@ function GetStartedContent() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleGuestLogin = () => {
-    router.push("/menu");
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const resp = await apiClient.post("guest-login.php", {});
+      if (resp.status === "success") {
+        login({
+          id: resp.data.user.id.toString(),
+          name: resp.data.user.name,
+          email: resp.data.user.email,
+          phone: resp.data.user.phone,
+          role: "customer",
+          is_guest: true,
+        });
+        router.push("/menu");
+      } else {
+        setError(resp.message || "Guest login failed.");
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to continue as guest.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -470,16 +491,17 @@ function GetStartedContent() {
                   </button>
                 </p>
               )}
-              
-              <button
-                  onClick={() => {
-                    setError("");
-                    setView("welcome");
-                  }}
-                  className="mt-4 text-xs font-semibold text-inkLight hover:text-ink transition-colors flex items-center justify-center gap-1 mx-auto"
-                >
-                  Return to Welcome
-              </button>
+              {token && (
+                <button
+                    onClick={() => {
+                      setError("");
+                      setView("welcome");
+                    }}
+                    className="mt-4 text-xs font-semibold text-inkLight hover:text-ink transition-colors flex items-center justify-center gap-1 mx-auto"
+                  >
+                    Return to Welcome
+                </button>
+              )}
             </div>
           )}
           

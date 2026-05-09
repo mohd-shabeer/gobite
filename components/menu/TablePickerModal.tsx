@@ -11,10 +11,15 @@ interface TablePickerModalProps {
 }
 
 export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
-  const { setSessionInfo, tableNumber, availableTables, restaurantId } = useStore();
+  const { setSessionInfo, tableNumber, availableTables, restaurantId, user } = useStore();
   const [selectedOption, setSelectedOption] = useState<string>(
     tableNumber || "Takeaway",
   );
+
+  const myEngagedTable = availableTables.find(
+    (t) => t.engaged_by_user_id?.toString() === user?.id?.toString()
+  );
+  const hasEngagedTable = !!myEngagedTable;
 
   const handleApply = () => {
     if (selectedOption === "Takeaway") {
@@ -68,11 +73,14 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
                   Option
                 </h3>
                 <button
+                  disabled={hasEngagedTable}
                   onClick={() => setSelectedOption("Takeaway")}
                   className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all font-semibold ${
                     selectedOption === "Takeaway"
                       ? "border-primary bg-accentLight text-primary"
-                      : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
+                      : hasEngagedTable
+                        ? "border-borderLite bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
                   }`}
                 >
                   <span>Takeaway Order</span>
@@ -88,19 +96,30 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
                     Available Tables
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
-                    {availableTables.map((table) => (
-                      <button
-                        key={table.id}
-                        onClick={() => setSelectedOption(table.table_number)}
-                        className={`py-3 rounded-xl border-2 transition-all font-semibold text-center ${
-                          selectedOption === table.table_number
-                            ? "border-primary bg-accentLight text-primary"
-                            : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
-                        }`}
-                      >
-                        {table.table_number}
-                      </button>
-                    ))}
+                    {availableTables.map((table) => {
+                      const isEngaged = table.status !== "available";
+                      const isMine =
+                        table.engaged_by_user_id?.toString() ===
+                        user?.id?.toString();
+                      const isDisabled = hasEngagedTable ? !isMine : isEngaged;
+
+                      return (
+                        <button
+                          key={table.id}
+                          disabled={isDisabled}
+                          onClick={() => setSelectedOption(table.table_number)}
+                          className={`py-3 rounded-xl border-2 transition-all font-semibold text-center ${
+                            selectedOption === table.table_number
+                              ? "border-primary bg-accentLight text-primary"
+                              : isDisabled
+                                ? "border-borderLite bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
+                          }`}
+                        >
+                          {table.table_number}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
