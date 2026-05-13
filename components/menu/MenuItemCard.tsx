@@ -10,6 +10,7 @@ export function MenuItemCard({
   item: MenuItem;
   onClick: () => void;
 }) {
+  console.log(`[DEBUG] Item Image URL for "${item.name}":`, item.image);
   const isAvailable = item.available !== false;
 
   return (

@@ -130,7 +130,8 @@ function GetStartedContent() {
           phone: resp.data.user.phone,
           role: "customer",
         });
-        router.push("/dashboard");
+        const dest = token ? "/menu" : "/dashboard";
+        router.push(dest);
       } else {
         setError(resp.message || "Invalid credentials.");
       }
