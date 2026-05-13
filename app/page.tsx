@@ -130,7 +130,7 @@ function GetStartedContent() {
           phone: resp.data.user.phone,
           role: "customer",
         });
-        router.push("/menu");
+        router.push("/dashboard");
       } else {
         setError(resp.message || "Invalid credentials.");
       }

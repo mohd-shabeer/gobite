@@ -16,10 +16,6 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
     tableNumber || "Takeaway",
   );
 
-  const myEngagedTable = availableTables.find(
-    (t) => t.engaged_by_user_id?.toString() === user?.id?.toString()
-  );
-  const hasEngagedTable = !!myEngagedTable;
 
   const handleApply = () => {
     if (selectedOption === "Takeaway") {
@@ -73,14 +69,11 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
                   Option
                 </h3>
                 <button
-                  disabled={hasEngagedTable}
                   onClick={() => setSelectedOption("Takeaway")}
                   className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all font-semibold ${
                     selectedOption === "Takeaway"
                       ? "border-primary bg-accentLight text-primary"
-                      : hasEngagedTable
-                        ? "border-borderLite bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
+                      : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
                   }`}
                 >
                   <span>Takeaway Order</span>
@@ -101,18 +94,17 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
                       const isMine =
                         table.engaged_by_user_id?.toString() ===
                         user?.id?.toString();
-                      const isDisabled = hasEngagedTable ? !isMine : isEngaged;
+                      const isSelected = selectedOption === table.table_number;
 
                       return (
                         <button
                           key={table.id}
-                          disabled={isDisabled}
                           onClick={() => setSelectedOption(table.table_number)}
                           className={`py-3 rounded-xl border-2 transition-all font-semibold text-center ${
-                            selectedOption === table.table_number
+                            isSelected
                               ? "border-primary bg-accentLight text-primary"
-                              : isDisabled
-                                ? "border-borderLite bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : isEngaged && !isMine
+                                ? "border-borderLite bg-gray-50 text-inkLight/70 opacity-80"
                                 : "border-borderLite bg-white text-inkMid hover:bg-gray-50"
                           }`}
                         >
@@ -130,7 +122,7 @@ export function TablePickerModal({ isOpen, onClose }: TablePickerModalProps) {
                 onClick={handleApply}
                 className="w-full bg-primary hover:bg-primaryHover text-white font-bold text-base py-4 rounded-2xl shadow-[0_6px_20px_rgba(255,107,53,0.3)] transition-all"
               >
-                Apply Location
+                Apply Selection
               </button>
             </div>
           </motion.div>

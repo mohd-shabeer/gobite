@@ -126,7 +126,7 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
                 description: item.description || "",
                 price: parseFloat(item.price),
                 offerPrice: item.offer_price ? parseFloat(item.offer_price) : undefined,
-                image: item.image_url ? `https://work.phpwebsites.in/gobite/photos/medium/${item.image_url}` : "",
+                image: item.image_url_full || (item.image_url ? `https://work.phpwebsites.in/gobite/photos/medium/${item.image_url}` : ""),
                 category: cat.name,
                 popular: item.is_popular == 1,
                 available: item.available == 1,
@@ -185,8 +185,18 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
           // PRIORITIZE URL TOKEN
           const searchParams = new URLSearchParams(window.location.search);
           const urlToken = searchParams.get("token") || searchParams.get("t");
+          const urlRestId = searchParams.get("restaurant_id");
+          const urlTable = searchParams.get("table");
 
-          if (urlToken) {
+          if (urlRestId) {
+            rid = urlRestId;
+            setRestaurantId(rid);
+            localStorage.setItem(STORAGE_KEYS.REST_ID, rid);
+            if (urlTable) {
+              setTableNumber(urlTable);
+              localStorage.setItem(STORAGE_KEYS.TABLE, urlTable);
+            }
+          } else if (urlToken) {
             try {
               const resp = await apiClient.post("verify-qr.php", {
                 qr_token: urlToken,

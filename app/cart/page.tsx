@@ -43,8 +43,8 @@ export default function CartPage() {
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
+  const serviceFee = subtotal * 0.1;
+  const grandTotal = subtotal + serviceFee;
 
   const handleInitialCheckout = () => {
     setShowEmailModal(true);
@@ -186,13 +186,13 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-inkMid">Service Fee (10%)</span>
-              <span className="font-semibold text-ink">£{tax.toFixed(2)}</span>
+              <span className="font-semibold text-ink">£{serviceFee.toFixed(2)}</span>
             </div>
             <div className="h-px w-full bg-borderLite my-2" />
             <div className="flex justify-between items-center pt-1">
               <span className="font-bold text-lg text-ink">Total</span>
               <span className="font-black text-2xl text-primary">
-                £{total.toFixed(2)}
+                £{grandTotal.toFixed(2)}
               </span>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function CartPage() {
               </span>
               {!isProcessing && (
                 <span className="font-black tracking-tight">
-                  £{total.toFixed(2)}
+                  £{grandTotal.toFixed(2)}
                 </span>
               )}
             </button>

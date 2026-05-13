@@ -33,6 +33,7 @@ export interface CartItem extends MenuItem {
   status?: "active" | "removed" | "unavailable";
   staffNote?: string;
   selectedVariant?: ItemVariant;
+  actualPrice?: number; // Price before discount
 }
 
 export type UserRole = "customer" | "admin" | "kitchen";
@@ -53,15 +54,19 @@ export interface User {
 
 export type OrderStatus =
   | "pending"
+  | "received"
   | "preparing"
   | "ready"
   | "completed"
+  | "delivered"
   | "cancelled";
 
 export interface Order {
   id: string;
   items: CartItem[];
-  total: number;
+  total: number; // net total
+  serviceFee: number;
+  grandTotal: number;
   status: OrderStatus;
   date: string;
   restaurantId: string;

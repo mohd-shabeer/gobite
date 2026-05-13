@@ -79,10 +79,8 @@ export function Header({
         <div className="flex items-center gap-2">
           {user && (
             <button
-              onClick={() => {
-                if (!user.is_guest) router.push("/settings");
-              }}
-              className={`flex items-center gap-1.5 bg-accentLight px-2.5 py-1.5 rounded-full mr-1 ${!user.is_guest ? 'hover:bg-[#FFDAC8] transition-colors cursor-pointer' : ''}`}
+              onClick={() => router.push("/dashboard")}
+              className={`flex items-center gap-1.5 bg-accentLight px-2.5 py-1.5 rounded-full mr-1 hover:bg-[#FFDAC8] transition-colors cursor-pointer`}
             >
               <div className="w-5 h-5 rounded-full bg-[#FFD9C8] flex items-center justify-center text-primary">
                 <User size={12} />
@@ -170,10 +168,10 @@ export function Header({
                   <LifeBuoy size={22} className="text-inkMid" />
                   <span className="text-base font-semibold text-ink">Support</span>
                 </button>
-                {user && !user.is_guest && (
-                  <button onClick={() => { closeDrawer(); router.push("/settings"); }} className="w-full flex items-center gap-4 px-6 py-4 hover:bg-bgBase transition-colors text-left">
+                {user && (
+                  <button onClick={() => { closeDrawer(); router.push("/dashboard"); }} className="w-full flex items-center gap-4 px-6 py-4 hover:bg-bgBase transition-colors text-left">
                     <User size={22} className="text-inkMid" />
-                    <span className="text-base font-semibold text-ink">Account Settings</span>
+                    <span className="text-base font-semibold text-ink">Dashboard</span>
                   </button>
                 )}
                 

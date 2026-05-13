@@ -137,7 +137,7 @@ export default function OrdersPage() {
                 <div className="flex flex-col items-end gap-2 text-right">
                   <StatusBadge status={order.status} />
                   <span className="font-black text-lg text-ink">
-                    £{order.total.toFixed(2)}
+                    £{(order.grandTotal || order.total).toFixed(2)}
                   </span>
                   <div className="text-inkLight mt-1">
                     {isExpanded ? (
@@ -238,13 +238,13 @@ export default function OrdersPage() {
                     <div className="flex justify-between items-center text-[13px] text-inkMid">
                       <span>Subtotal</span>
                       <span className="font-semibold">
-                        £{(order.total / 1.1).toFixed(2)}
+                        £{order.total.toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-[13px] text-inkMid">
                       <span>Service Fee (10%)</span>
                       <span className="font-semibold">
-                        £{(order.total - order.total / 1.1).toFixed(2)}
+                        £{(order.serviceFee || 0).toFixed(2)}
                       </span>
                     </div>
                     <div className="h-px bg-borderLite my-1" />
@@ -253,7 +253,7 @@ export default function OrdersPage() {
                         Grand Total
                       </span>
                       <span className="font-extrabold text-lg text-primary">
-                        £{order.total.toFixed(2)}
+                        £{(order.grandTotal || order.total).toFixed(2)}
                       </span>
                     </div>
                   </div>
