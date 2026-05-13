@@ -126,7 +126,7 @@ export const StoreProvider = ({ children }: { children?: ReactNode }) => {
                 description: item.description || "",
                 price: parseFloat(item.price),
                 offerPrice: item.offer_price ? parseFloat(item.offer_price) : undefined,
-                image: item.image_url_full || (item.image_url ? `https://work.phpwebsites.in/gobite/photos/medium/${item.image_url}` : ""),
+                image: item.image_url_full || "",
                 category: cat.name,
                 popular: item.is_popular == 1,
                 available: item.available == 1,
