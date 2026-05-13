@@ -96,7 +96,8 @@ function GetStartedContent() {
           role: "customer",
           is_guest: true,
         });
-        router.push("/menu");
+        const dest = token ? "/menu" : "/dashboard";
+        router.push(dest);
       } else {
         setError(resp.message || "Guest login failed.");
       }
